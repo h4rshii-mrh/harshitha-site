@@ -5,21 +5,16 @@ Plain HTML/CSS/JS with one serverless function for Spotify. There's no build ste
 ```
 index.html            the whole page
 styles.css            theme + layout
-script.js             nav, animations, Spotify widget
+script.js             nav, animations, moon phases, Spotify widget
 api/now-playing.js    Vercel function that calls Spotify
-photos/               put photo1.jpg … photo3.jpg here
 resume.pdf            linked from the Download Resume buttons
 scripts/get_spotify_token.py   one-time helper to get a Spotify refresh token
 ```
 
-## Add your photos
-Put three photos in `photos/` and name them `photo1.jpg`, `photo2.jpg` and `photo3.jpg`.
-Portrait (3:4) works best; they sit inside arched "door" frames. Until you add them, a striped placeholder shows in each spot.
-
 ## Deploy (GitHub + Vercel, all in the browser)
 1. Create a new **public or private** repo on github.com, for example `harshitha-site`.
 2. Click **Add file → Upload files** and drag in everything inside this folder.
-   That includes the `api`, `photos` and `scripts` folders, but leave out `.env` files.
+   That includes the `api` and `scripts` folders, but leave out `.env` files.
 3. Go to vercel.com, sign in with GitHub, then click **Add New → Project** and import the repo.
    Leave every setting at its default and click **Deploy**.
 4. Every time you change a file on GitHub, Vercel redeploys automatically.

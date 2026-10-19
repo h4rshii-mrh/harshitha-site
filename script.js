@@ -1,4 +1,4 @@
-// ---------- Nav: border on scroll, mobile toggle, active link ----------
+// ---------- Nav: line on scroll, mobile toggle, active link ----------
 const nav = document.getElementById("nav");
 const toggle = nav.querySelector(".nav-toggle");
 const links = [...nav.querySelectorAll(".nav-links a")];
@@ -60,12 +60,99 @@ const countObserver = new IntersectionObserver(
 );
 document.querySelectorAll("[data-count]").forEach((el) => countObserver.observe(el));
 
-// ---------- Photos: placeholder until real photos are added ----------
-document.querySelectorAll(".frame img").forEach((img) => {
-  const markEmpty = () => img.closest(".frame").classList.add("empty");
-  if (img.complete && img.naturalWidth === 0) markEmpty();
-  img.addEventListener("error", markEmpty);
-});
+// ---------- Hero spiral (drawn as an Archimedean curl) ----------
+(() => {
+  const path = document.querySelector(".spiral path");
+  if (!path) return;
+  let d = "";
+  for (let t = 0; t <= Math.PI * 9; t += 0.08) {
+    const r = 4 + t * 6.6;
+    const x = 200 + r * Math.cos(t);
+    const y = 200 + r * Math.sin(t) * 0.92;
+    d += (d ? " L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+  }
+  path.setAttribute("d", d);
+})();
+
+// ---------- Moon phase (computed locally, no API) ----------
+const SYNODIC = 29.530588853;
+const KNOWN_NEW = Date.UTC(2000, 0, 6, 18, 14); // reference new moon
+const DAY = 86400000;
+
+function moonAge(date) {
+  const days = (date - KNOWN_NEW) / DAY;
+  return ((days % SYNODIC) + SYNODIC) % SYNODIC;
+}
+// Named phases get about a day either side; everything between is crescent/gibbous.
+function phaseName(age) {
+  const q = SYNODIC / 4;
+  if (age < 1 || age > SYNODIC - 1) return "New Moon";
+  if (Math.abs(age - q) < 1) return "First Quarter";
+  if (Math.abs(age - 2 * q) < 1) return "Full Moon";
+  if (Math.abs(age - 3 * q) < 1) return "Last Quarter";
+  if (age < q) return "Waxing Crescent";
+  if (age < 2 * q) return "Waxing Gibbous";
+  if (age < 3 * q) return "Waning Gibbous";
+  return "Waning Crescent";
+}
+// SVG path of the lit part of a moon of radius r at (c, c)
+function litPath(age, c, r) {
+  const a = (age / SYNODIC) * 2 * Math.PI;
+  const rx = Math.abs(Math.cos(a)) * r;
+  const waxing = age < SYNODIC / 2;
+  const outer = waxing ? 1 : 0;
+  const inner = waxing ? (Math.cos(a) > 0 ? 0 : 1) : (Math.cos(a) > 0 ? 1 : 0);
+  return `M${c} ${c - r} A${r} ${r} 0 0 ${outer} ${c} ${c + r} A${rx} ${r} 0 0 ${inner} ${c} ${c - r}Z`;
+}
+function moonSVG(age, size, id) {
+  const c = size / 2, r = size / 2 - 2;
+  return `
+    <defs>
+      <radialGradient id="lit-${id}" cx="40%" cy="38%" r="70%">
+        <stop offset="0" stop-color="#ece6d6"/><stop offset=".7" stop-color="#cfc7b4"/><stop offset="1" stop-color="#a69e8b"/>
+      </radialGradient>
+      <clipPath id="clip-${id}"><path d="${litPath(age, c, r)}"/></clipPath>
+    </defs>
+    <circle cx="${c}" cy="${c}" r="${r}" fill="#1a1b20" stroke="rgba(217,210,195,.18)" stroke-width="1"/>
+    <g clip-path="url(#clip-${id})">
+      <circle cx="${c}" cy="${c}" r="${r}" fill="url(#lit-${id})"/>
+      <g fill="rgba(90,84,72,.35)">
+        <circle cx="${c * 0.72}" cy="${c * 0.7}" r="${r * 0.16}"/>
+        <circle cx="${c * 1.28}" cy="${c * 0.9}" r="${r * 0.1}"/>
+        <circle cx="${c * 1.05}" cy="${c * 1.32}" r="${r * 0.2}"/>
+        <circle cx="${c * 0.62}" cy="${c * 1.22}" r="${r * 0.08}"/>
+        <circle cx="${c * 1.38}" cy="${c * 1.3}" r="${r * 0.07}"/>
+      </g>
+      <circle cx="${c}" cy="${c}" r="${r}" fill="#000" filter="url(#grit)" opacity=".5"/>
+    </g>`;
+}
+
+(() => {
+  const now = new Date();
+  const age = moonAge(now);
+  const lit = Math.round(((1 - Math.cos((age / SYNODIC) * 2 * Math.PI)) / 2) * 100);
+  const fmt = (d) => d.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+  const untilFull = (SYNODIC / 2 - age + SYNODIC) % SYNODIC;
+  const untilNew = SYNODIC - age;
+
+  document.getElementById("moon-svg").innerHTML = moonSVG(age, 200, "big");
+  document.getElementById("moon-name").textContent = phaseName(age);
+  document.getElementById("moon-meta").textContent = `${lit}% illuminated · day ${Math.floor(age) + 1} of the cycle`;
+  document.getElementById("moon-full").textContent = fmt(new Date(+now + untilFull * DAY));
+  document.getElementById("moon-new").textContent = fmt(new Date(+now + untilNew * DAY));
+
+  const week = document.getElementById("moon-week");
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(+now + i * DAY);
+    const li = document.createElement("li");
+    if (i === 0) li.className = "today";
+    li.style.transitionDelay = `${300 + i * 120}ms`;
+    li.innerHTML = `<svg viewBox="0 0 44 44" aria-hidden="true">${moonSVG(moonAge(d), 44, "d" + i)}</svg>
+      <span>${i === 0 ? "Tonight" : d.toLocaleDateString(undefined, { weekday: "short" })}</span>`;
+    li.title = phaseName(moonAge(d));
+    week.append(li);
+  }
+})();
 
 // ---------- Spotify: now playing ----------
 const sp = {
