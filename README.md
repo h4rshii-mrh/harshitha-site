@@ -5,17 +5,16 @@ Plain HTML/CSS/JS with one serverless function for Spotify. There's no build ste
 ```
 index.html            the whole page
 styles.css            theme + layout
-script.js             nav, animations, "blasts", Spotify widget
+script.js             nav, animations, Spotify widget
 api/now-playing.js    Vercel function that calls Spotify
-photos/               put photo1.jpg … photo4.jpg here
+photos/               put photo1.jpg … photo3.jpg here
 resume.pdf            linked from the Download Resume buttons
 scripts/get_spotify_token.py   one-time helper to get a Spotify refresh token
 ```
 
 ## Add your photos
-Put four photos in `photos/` and name them `photo1.jpg`, `photo2.jpg`, `photo3.jpg` and `photo4.jpg`.
-Portrait (4:5) works best. Until you add them, a striped placeholder shows in each spot.
-To change a caption, edit the `<figcaption>` text in `index.html`.
+Put three photos in `photos/` and name them `photo1.jpg`, `photo2.jpg` and `photo3.jpg`.
+Portrait (3:4) works best; they sit inside arched "door" frames. Until you add them, a striped placeholder shows in each spot.
 
 ## Deploy (GitHub + Vercel, all in the browser)
 1. Create a new **public or private** repo on github.com, for example `harshitha-site`.
@@ -42,3 +41,7 @@ To change a caption, edit the `<figcaption>` text in `index.html`.
 5. Go to **Deployments**, open the **⋯** menu on the latest one, and click **Redeploy**.
 
 The card shows your current song with a spinning record. When nothing is playing, it shows the last song you played.
+Below that, "On repeat this month" lists your top 5 songs from about the last 4 weeks. Spotify updates this list about once a day.
+
+**Already made a token before?** Run the script again. The top-songs list needs an extra permission (`user-top-read`).
+Replace `SPOTIFY_REFRESH_TOKEN` in Vercel with the new token, then redeploy.

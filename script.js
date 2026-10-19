@@ -1,4 +1,4 @@
-// ---------- Nav: shadow on scroll, mobile toggle, active link ----------
+// ---------- Nav: border on scroll, mobile toggle, active link ----------
 const nav = document.getElementById("nav");
 const toggle = nav.querySelector(".nav-toggle");
 const links = [...nav.querySelectorAll(".nav-links a")];
@@ -45,11 +45,11 @@ const countObserver = new IntersectionObserver(
       if (!e.isIntersecting) return;
       const el = e.target;
       const target = +el.dataset.count;
+      const suffix = el.dataset.suffix || "";
       const start = performance.now();
-      const dur = 1400;
       const step = (now) => {
-        const p = Math.min((now - start) / dur, 1);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        const p = Math.min((now - start) / 1400, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
         if (p < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
@@ -60,45 +60,14 @@ const countObserver = new IntersectionObserver(
 );
 document.querySelectorAll("[data-count]").forEach((el) => countObserver.observe(el));
 
-// ---------- "Blast" notifications (once per section, max a few per visit) ----------
-const blast = document.getElementById("blast");
-const blastText = document.getElementById("blast-text");
-let blastTimer;
-let blastsShown = 0;
-let blastsMuted = false;
-
-function showBlast(msg) {
-  if (blastsMuted || blastsShown >= 4) return;
-  blastsShown++;
-  blastText.textContent = msg;
-  blast.classList.add("show");
-  clearTimeout(blastTimer);
-  blastTimer = setTimeout(() => blast.classList.remove("show"), 5200);
-}
-document.getElementById("blast-close").addEventListener("click", () => {
-  blast.classList.remove("show");
-  blastsMuted = true;
-});
-const blastObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      showBlast(e.target.dataset.blast);
-      blastObserver.unobserve(e.target);
-    });
-  },
-  { threshold: 0.35 }
-);
-document.querySelectorAll("[data-blast]").forEach((s) => blastObserver.observe(s));
-
-// ---------- Photos: show a styled placeholder until real photos are added ----------
-document.querySelectorAll(".polaroid img").forEach((img) => {
-  const markEmpty = () => img.closest(".polaroid").classList.add("empty");
+// ---------- Photos: placeholder until real photos are added ----------
+document.querySelectorAll(".frame img").forEach((img) => {
+  const markEmpty = () => img.closest(".frame").classList.add("empty");
   if (img.complete && img.naturalWidth === 0) markEmpty();
   img.addEventListener("error", markEmpty);
 });
 
-// ---------- Spotify now playing ----------
+// ---------- Spotify: now playing ----------
 const sp = {
   dot: document.getElementById("spotify-dot"),
   label: document.getElementById("spotify-label"),
@@ -124,11 +93,11 @@ async function loadSpotify() {
     sp.dot.classList.toggle("live", d.isPlaying);
     sp.vinyl.classList.toggle("spin", d.isPlaying);
     sp.eq.classList.toggle("on", d.isPlaying);
-    sp.label.textContent = d.isPlaying ? "Now playing in her headphones" : "Last spotted listening to";
+    sp.label.textContent = d.isPlaying ? "Now playing" : "Last played";
   } catch {
-    sp.title.textContent = "Taking a break from the aux";
+    sp.title.textContent = "Nothing playing right now";
     sp.artist.textContent = "Check back soon";
-    sp.label.textContent = "Off the record";
+    sp.label.textContent = "Spotify";
     sp.dot.classList.remove("live");
     sp.vinyl.classList.remove("spin");
     sp.eq.classList.remove("on");
@@ -136,5 +105,43 @@ async function loadSpotify() {
 }
 loadSpotify();
 setInterval(() => document.visibilityState === "visible" && loadSpotify(), 30000);
+
+// ---------- Spotify: top tracks this month ----------
+async function loadTopTracks() {
+  try {
+    const res = await fetch("/api/top-tracks");
+    if (!res.ok) return;
+    const { tracks } = await res.json();
+    if (!tracks?.length) return;
+    const list = document.getElementById("top-list");
+    tracks.forEach((t) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = t.songUrl || "https://open.spotify.com";
+      a.target = "_blank";
+      a.rel = "noopener";
+      if (t.albumImageUrl) {
+        const img = document.createElement("img");
+        img.src = t.albumImageUrl;
+        img.alt = "";
+        a.append(img);
+      }
+      const text = document.createElement("span");
+      text.className = "tt-text";
+      const title = document.createElement("span");
+      title.className = "tt-title";
+      title.textContent = t.title;
+      const artist = document.createElement("span");
+      artist.className = "tt-artist";
+      artist.textContent = ` · ${t.artist}`;
+      text.append(title, artist);
+      a.append(text);
+      li.append(a);
+      list.append(li);
+    });
+    document.getElementById("top-tracks").hidden = false;
+  } catch {}
+}
+loadTopTracks();
 
 document.getElementById("year").textContent = new Date().getFullYear();
