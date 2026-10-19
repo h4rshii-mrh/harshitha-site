@@ -129,10 +129,12 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
   display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(32px, 6vw, 72px); align-items: center;
   min-height: calc(100vh - 70px); padding-top: clamp(40px, 6vw, 64px);
 }
+/* faint background spiral; script.js rotates it with scroll direction */
 .spiral {
-  position: absolute; left: -8%; top: 8%; width: min(560px, 80vw); z-index: -1; opacity: .12; filter: url(#rough);
+  position: fixed; left: 50%; top: 50%; width: min(1100px, 140vmax); aspect-ratio: 1; z-index: -1;
+  translate: -50% -50%; opacity: .045; pointer-events: none; will-change: transform;
 }
-.spiral path { fill: none; stroke: var(--bone); stroke-width: 1.2; stroke-dasharray: 3000; stroke-dashoffset: 3000; animation: draw 6s ease forwards .4s; }
+.spiral path { fill: none; stroke: var(--bone); stroke-width: .7; stroke-dasharray: 3000; stroke-dashoffset: 3000; animation: draw 5s ease forwards .3s; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 .kicker { font-family: var(--serif); font-style: italic; color: var(--dusk); font-size: 20px; letter-spacing: .02em; }
 .hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(50px, 8vw, 96px); line-height: .98; letter-spacing: -.01em; margin: 14px 0 26px; }
@@ -201,9 +203,9 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
 /* ============ About ============ */
 .about-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: clamp(28px, 5vw, 56px); align-items: start; }
 .about-grid > p { color: var(--bone-soft); }
-.interests ul { list-style: none; }
-.interests li { padding: 6px 0; border-bottom: 1px dashed var(--bone-faint); font-family: var(--serif); font-style: italic; font-size: 19px; }
-.interests li::before { content: "✕ "; font-style: normal; font-size: 11px; color: var(--wine); margin-right: 4px; }
+.interests > ul { list-style: none; }
+.interests > ul li { padding: 6px 0; border-bottom: 1px dashed var(--bone-faint); font-family: var(--serif); font-style: italic; font-size: 19px; }
+.interests > ul li::before { content: "✕ "; font-style: normal; font-size: 11px; color: var(--wine); margin-right: 4px; }
 
 /* stats: numbers with a sewn-on button */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 60px; border-top: 1px solid var(--bone-faint); }
@@ -245,22 +247,21 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
 .edu p { color: var(--bone-soft); }
 .edu-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(28px, 5vw, 56px); }
 
-/* ============ Moon ============ */
-.moon-wrap { display: flex; align-items: center; gap: clamp(28px, 6vw, 64px); }
-.moon-big { width: clamp(160px, 26vw, 230px); flex: none; animation: float 9s ease-in-out infinite; }
-.moon-big svg { width: 100%; overflow: visible; filter: drop-shadow(0 0 36px rgba(217,210,195,.18)); }
-@keyframes float { 50% { transform: translateY(-8px); } }
-.moon-name { font-family: var(--serif); font-size: clamp(32px, 4.4vw, 46px); line-height: 1.1; font-style: italic; }
-.moon-meta { font-family: var(--type); font-size: 14px; color: var(--bone-soft); margin-top: 6px; }
-.moon-next { display: flex; gap: 36px; margin-top: 22px; flex-wrap: wrap; }
-.moon-next dt { font-family: var(--type); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--brass); }
-.moon-next dd { font-family: var(--serif); font-size: 21px; }
-.moon-week { list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 52px; position: relative; padding-top: 28px; }
+/* ============ Moon widget ============ */
+.moon-card { position: relative; margin-top: 32px; padding: 18px 18px 14px; background: rgba(8,9,11,.7); box-shadow: 0 0 60px rgba(217,210,195,.05); }
+.moon-card::before { content: ""; position: absolute; inset: 0; border: 1px solid var(--bone-faint); filter: url(#rough); pointer-events: none; }
+.moon-head { font-family: var(--type); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--brass); }
+.moon-row { display: flex; align-items: center; gap: 16px; margin: 12px 0 14px; }
+.moon-big { width: 78px; height: 78px; flex: none; overflow: visible; filter: drop-shadow(0 0 18px rgba(217,210,195,.2)); animation: float 8s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-4px); } }
+.moon-name { font-family: var(--serif); font-style: italic; font-size: 22px; line-height: 1.15; }
+.moon-meta { font-family: var(--type); font-size: 12px; color: var(--bone-soft); line-height: 1.5; }
+.moon-week { list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding-top: 12px; position: relative; }
 .moon-week::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--bone-faint); filter: url(#rough); }
-.moon-week li { text-align: center; opacity: 0; transform: translateY(8px); transition: opacity .6s, transform .6s; }
-.moon-week.in li { opacity: 1; transform: none; }
-.moon-week svg { width: 44px; height: 44px; margin: 0 auto 8px; display: block; }
-.moon-week span { font-family: var(--type); font-size: 12px; color: var(--bone-soft); letter-spacing: .08em; }
+.moon-week li { text-align: center; opacity: 0; transform: translateY(6px); transition: opacity .6s, transform .6s; }
+.in .moon-week li { opacity: 1; transform: none; }
+.moon-week svg { width: 24px; height: 24px; margin: 0 auto 4px; display: block; }
+.moon-week span { font-family: var(--type); font-size: 10px; color: var(--bone-soft); }
 .moon-week li.today span { color: var(--bone); border-bottom: 1px solid var(--wine); }
 
 /* ============ Contact ============ */
@@ -291,15 +292,10 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
 @media (max-width: 560px) {
   body { font-size: 17px; }
   .job-top, .edu { flex-direction: column; align-items: flex-start; }
-  .moon-wrap { flex-direction: column; text-align: center; }
-  .moon-next { justify-content: center; }
-  .moon-week { gap: 4px; }
-  .moon-week svg { width: 34px; height: 34px; }
-  .moon-week span { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; filter: none; }
   .spiral path { stroke-dashoffset: 0; }
-  .moon-week li { opacity: 1; transform: none; }
+  .moon-week li { opacity: 1 !important; transform: none !important; }
 }

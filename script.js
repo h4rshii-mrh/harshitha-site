@@ -35,7 +35,9 @@ const revealObserver = new IntersectionObserver(
 );
 document.querySelectorAll(".reveal").forEach((el, i) => {
   el.style.transitionDelay = `${(i % 4) * 80}ms`;
-  revealObserver.observe(el);
+  // anything already on screen fades in straight away
+  if (el.getBoundingClientRect().top < innerHeight) requestAnimationFrame(() => el.classList.add("in"));
+  else revealObserver.observe(el);
 });
 
 // ---------- Count-up numbers ----------
@@ -60,7 +62,7 @@ const countObserver = new IntersectionObserver(
 );
 document.querySelectorAll("[data-count]").forEach((el) => countObserver.observe(el));
 
-// ---------- Hero spiral (drawn as an Archimedean curl) ----------
+// ---------- Background spiral (an Archimedean curl) ----------
 (() => {
   const path = document.querySelector(".spiral path");
   if (!path) return;
@@ -72,6 +74,18 @@ document.querySelectorAll("[data-count]").forEach((el) => countObserver.observe(
     d += (d ? " L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
   }
   path.setAttribute("d", d);
+
+  // Turn with the scroll: down spins one way, up spins it back. Eased so it glides.
+  const spiral = path.closest("svg");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let current = 0;
+  const tick = () => {
+    const target = scrollY * 0.06;
+    current += (target - current) * 0.08;
+    spiral.style.transform = `rotate(${current.toFixed(2)}deg)`;
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 })();
 
 // ---------- Moon phase (computed locally, no API) ----------
@@ -131,24 +145,25 @@ function moonSVG(age, size, id) {
   const now = new Date();
   const age = moonAge(now);
   const lit = Math.round(((1 - Math.cos((age / SYNODIC) * 2 * Math.PI)) / 2) * 100);
-  const fmt = (d) => d.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+  const fmt = (d) => d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   const untilFull = (SYNODIC / 2 - age + SYNODIC) % SYNODIC;
-  const untilNew = SYNODIC - age;
+  const name = phaseName(age);
 
   document.getElementById("moon-svg").innerHTML = moonSVG(age, 200, "big");
-  document.getElementById("moon-name").textContent = phaseName(age);
-  document.getElementById("moon-meta").textContent = `${lit}% illuminated · day ${Math.floor(age) + 1} of the cycle`;
-  document.getElementById("moon-full").textContent = fmt(new Date(+now + untilFull * DAY));
-  document.getElementById("moon-new").textContent = fmt(new Date(+now + untilNew * DAY));
+  document.getElementById("moon-name").textContent = name;
+  document.getElementById("moon-meta").textContent = `${lit}% lit · day ${Math.floor(age) + 1} of 29`;
+  document.getElementById("moon-full").textContent = name === "Full Moon"
+    ? "Full tonight"
+    : `Next full moon: ${fmt(new Date(+now + untilFull * DAY))}`;
 
   const week = document.getElementById("moon-week");
   for (let i = 0; i < 7; i++) {
     const d = new Date(+now + i * DAY);
     const li = document.createElement("li");
     if (i === 0) li.className = "today";
-    li.style.transitionDelay = `${300 + i * 120}ms`;
-    li.innerHTML = `<svg viewBox="0 0 44 44" aria-hidden="true">${moonSVG(moonAge(d), 44, "d" + i)}</svg>
-      <span>${i === 0 ? "Tonight" : d.toLocaleDateString(undefined, { weekday: "short" })}</span>`;
+    li.style.transitionDelay = `${400 + i * 110}ms`;
+    li.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${moonSVG(moonAge(d), 24, "d" + i)}</svg>
+      <span>${i === 0 ? "Today" : d.toLocaleDateString(undefined, { weekday: "short" })}</span>`;
     li.title = phaseName(moonAge(d));
     week.append(li);
   }

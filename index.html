@@ -18,6 +18,7 @@
     <filter id="grit"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="8"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
   </svg>
   <div class="grain" aria-hidden="true"></div>
+  <svg class="spiral" viewBox="0 0 400 400" aria-hidden="true"><path/></svg>
 
   <header class="nav" id="nav">
     <a href="#top" class="nav-logo" aria-label="Back to top">
@@ -29,7 +30,6 @@
       <a href="#about">About</a>
       <a href="#experience">Experience</a>
       <a href="#education">Education</a>
-      <a href="#moon">Moon</a>
       <a href="#contact" class="nav-cta">Contact</a>
     </nav>
   </header>
@@ -37,9 +37,6 @@
   <main id="top">
     <!-- INTRO -->
     <section class="hero">
-      <svg class="spiral" viewBox="0 0 400 400" aria-hidden="true">
-        <path d="M200 200 m0 0 c8 -2 14 6 10 14 c-6 12 -26 10 -32 -4 c-9 -20 8 -42 30 -42 c30 0 48 28 42 56 c-8 36 -50 54 -84 40 c-44 -18 -56 -72 -30 -110 c32 -48 104 -52 144 -12 c46 46 36 126 -16 162 c-60 42 -150 24 -186 -42"/>
-      </svg>
       <div class="hero-text">
         <p class="kicker reveal">— beyond the little door —</p>
         <h1 class="reveal">Harshitha <em>Kuchibhotla</em></h1>
@@ -90,8 +87,22 @@
         <div class="interests reveal">
           <p class="mini">Interests</p>
           <ul>
-            <li>Human-Centered AI</li><li>AI in Healthcare</li><li>UX &amp; Design</li><li>Strategy &amp; Startups</li><li>Music</li>
+            <li>Human-Centered AI</li><li>AI in Healthcare</li><li>UX &amp; Design</li><li>Strategy &amp; Startups</li><li>Music</li><li>Moon Watching</li>
           </ul>
+
+          <!-- Moon widget: computed in the browser, no API -->
+          <div class="moon-card" id="moon">
+            <p class="moon-head">The moon tonight</p>
+            <div class="moon-row">
+              <svg class="moon-big" viewBox="0 0 200 200" id="moon-svg" role="img" aria-label="Current moon phase"></svg>
+              <div>
+                <p class="moon-name" id="moon-name">—</p>
+                <p class="moon-meta" id="moon-meta">&nbsp;</p>
+                <p class="moon-meta" id="moon-full">&nbsp;</p>
+              </div>
+            </div>
+            <ol class="moon-week" id="moon-week" aria-label="Moon phases for the next seven nights"></ol>
+          </div>
         </div>
       </div>
 
@@ -185,25 +196,6 @@
     </section>
 
     <div class="stripes" aria-hidden="true"></div>
-
-    <!-- MOON -->
-    <section id="moon" class="moon-section">
-      <h2 class="title reveal"><span>IV.</span> The Moon Tonight</h2>
-      <div class="moon-wrap reveal">
-        <div class="moon-big">
-          <svg viewBox="0 0 200 200" id="moon-svg" role="img" aria-label="Current moon phase"></svg>
-        </div>
-        <div class="moon-info">
-          <p class="moon-name" id="moon-name">—</p>
-          <p class="moon-meta" id="moon-meta">&nbsp;</p>
-          <dl class="moon-next">
-            <div><dt>Next full moon</dt><dd id="moon-full">—</dd></div>
-            <div><dt>Next new moon</dt><dd id="moon-new">—</dd></div>
-          </dl>
-        </div>
-      </div>
-      <ol class="moon-week reveal" id="moon-week" aria-label="Moon phases for the next seven nights"></ol>
-    </section>
 
     <!-- CONTACT -->
     <section id="contact" class="contact">
