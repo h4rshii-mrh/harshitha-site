@@ -247,21 +247,29 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
 .edu p { color: var(--bone-soft); }
 .edu-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(28px, 5vw, 56px); }
 
-/* ============ Moon widget ============ */
-.moon-card { position: relative; margin-top: 32px; padding: 18px 18px 14px; background: rgba(8,9,11,.7); box-shadow: 0 0 60px rgba(217,210,195,.05); }
-.moon-card::before { content: ""; position: absolute; inset: 0; border: 1px solid var(--bone-faint); filter: url(#rough); pointer-events: none; }
-.moon-head { font-family: var(--type); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--brass); }
-.moon-row { display: flex; align-items: center; gap: 16px; margin: 12px 0 14px; }
-.moon-big { width: 78px; height: 78px; flex: none; overflow: visible; filter: drop-shadow(0 0 18px rgba(217,210,195,.2)); animation: float 8s ease-in-out infinite; }
-@keyframes float { 50% { transform: translateY(-4px); } }
-.moon-name { font-family: var(--serif); font-style: italic; font-size: 22px; line-height: 1.15; }
-.moon-meta { font-family: var(--type); font-size: 12px; color: var(--bone-soft); line-height: 1.5; }
-.moon-week { list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding-top: 12px; position: relative; }
-.moon-week::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--bone-faint); filter: url(#rough); }
-.moon-week li { text-align: center; opacity: 0; transform: translateY(6px); transition: opacity .6s, transform .6s; }
-.in .moon-week li { opacity: 1; transform: none; }
-.moon-week svg { width: 24px; height: 24px; margin: 0 auto 4px; display: block; }
-.moon-week span { font-family: var(--type); font-size: 10px; color: var(--bone-soft); }
+/* ============ Sky moon (hangs over the door) ============ */
+.hero-visual { position: relative; padding-top: 100px; }
+.hero-visual .door { z-index: 1; }
+.sky-moon { position: absolute; top: 0; right: -34px; z-index: 0; outline: none; }
+.moon-big {
+  display: block; width: 116px; height: 116px; overflow: visible;
+  filter: drop-shadow(0 0 30px rgba(217,210,195,.22));
+  animation: float 9s ease-in-out infinite;
+}
+@keyframes float { 50% { transform: translateY(-6px); } }
+/* caption sits to the left of the moon, above the arch */
+.moon-cap { position: absolute; right: 128px; top: 2px; text-align: right; white-space: nowrap; }
+.moon-name { font-family: var(--serif); font-style: italic; font-size: 19px; line-height: 1.2; }
+.moon-meta { font-family: var(--type); font-size: 11px; letter-spacing: .06em; color: var(--bone-soft); }
+/* the week ahead appears on hover / focus */
+.moon-week {
+  list-style: none; display: flex; gap: 7px; justify-content: flex-end; margin-top: 8px;
+  opacity: 0; transform: translateY(-4px); transition: opacity .4s, transform .4s; pointer-events: none;
+}
+.sky-moon:hover .moon-week, .sky-moon:focus-visible .moon-week { opacity: 1; transform: none; }
+.moon-week li { text-align: center; }
+.moon-week svg { width: 18px; height: 18px; display: block; margin: 0 auto 2px; }
+.moon-week span { font-family: var(--type); font-size: 9px; color: var(--bone-soft); }
 .moon-week li.today span { color: var(--bone); border-bottom: 1px solid var(--wine); }
 
 /* ============ Contact ============ */
@@ -285,6 +293,11 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
   .hero, .about-grid, .edu-grid { grid-template-columns: 1fr; }
   .hero { min-height: auto; }
   .door { max-width: 380px; width: 100%; margin: 0 auto; }
+  .hero-visual { max-width: 380px; width: 100%; margin: 0 auto; padding-top: 108px; }
+  .sky-moon { right: -6px; }
+  .moon-big { width: 92px; height: 92px; }
+  .moon-cap { right: 100px; top: 8px; }
+  .moon-week { opacity: 1; transform: none; }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(3) { border-left: 0; }
   .stat:nth-child(n+3) { border-top: 1px solid var(--bone-faint); }
@@ -297,5 +310,5 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; filter: none; }
   .spiral path { stroke-dashoffset: 0; }
-  .moon-week li { opacity: 1 !important; transform: none !important; }
+  .moon-week { opacity: 1; transform: none; }
 }

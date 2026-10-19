@@ -50,6 +50,17 @@
         </div>
       </div>
 
+      <div class="hero-visual">
+      <!-- Tonight's real moon, hanging over the door (computed in the browser) -->
+      <div class="sky-moon reveal" id="moon" tabindex="0" aria-label="Tonight's moon phase">
+        <svg class="moon-big" viewBox="0 0 200 200" id="moon-svg" aria-hidden="true"></svg>
+        <div class="moon-cap">
+          <p class="moon-name" id="moon-name">—</p>
+          <p class="moon-meta" id="moon-meta">&nbsp;</p>
+          <ol class="moon-week" id="moon-week" aria-label="Moon phases for the next seven nights"></ol>
+        </div>
+      </div>
+
       <!-- Spotify, framed as the little door -->
       <aside class="door reveal" id="spotify" aria-live="polite">
         <div class="door-inner">
@@ -69,6 +80,7 @@
         </div>
         <span class="keyhole" aria-hidden="true"></span>
       </aside>
+      </div>
     </section>
 
     <div class="stripes" aria-hidden="true"></div>
@@ -89,20 +101,6 @@
           <ul>
             <li>Human-Centered AI</li><li>AI in Healthcare</li><li>UX &amp; Design</li><li>Strategy &amp; Startups</li><li>Music</li><li>Moon Watching</li>
           </ul>
-
-          <!-- Moon widget: computed in the browser, no API -->
-          <div class="moon-card" id="moon">
-            <p class="moon-head">The moon tonight</p>
-            <div class="moon-row">
-              <svg class="moon-big" viewBox="0 0 200 200" id="moon-svg" role="img" aria-label="Current moon phase"></svg>
-              <div>
-                <p class="moon-name" id="moon-name">—</p>
-                <p class="moon-meta" id="moon-meta">&nbsp;</p>
-                <p class="moon-meta" id="moon-full">&nbsp;</p>
-              </div>
-            </div>
-            <ol class="moon-week" id="moon-week" aria-label="Moon phases for the next seven nights"></ol>
-          </div>
         </div>
       </div>
 

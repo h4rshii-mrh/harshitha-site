@@ -151,10 +151,8 @@ function moonSVG(age, size, id) {
 
   document.getElementById("moon-svg").innerHTML = moonSVG(age, 200, "big");
   document.getElementById("moon-name").textContent = name;
-  document.getElementById("moon-meta").textContent = `${lit}% lit · day ${Math.floor(age) + 1} of 29`;
-  document.getElementById("moon-full").textContent = name === "Full Moon"
-    ? "Full tonight"
-    : `Next full moon: ${fmt(new Date(+now + untilFull * DAY))}`;
+  const full = name === "Full Moon" ? "full tonight" : `full ${fmt(new Date(+now + untilFull * DAY))}`;
+  document.getElementById("moon-meta").textContent = `${lit}% lit · ${full}`;
 
   const week = document.getElementById("moon-week");
   for (let i = 0; i < 7; i++) {
@@ -163,7 +161,7 @@ function moonSVG(age, size, id) {
     if (i === 0) li.className = "today";
     li.style.transitionDelay = `${400 + i * 110}ms`;
     li.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${moonSVG(moonAge(d), 24, "d" + i)}</svg>
-      <span>${i === 0 ? "Today" : d.toLocaleDateString(undefined, { weekday: "short" })}</span>`;
+      <span>${d.toLocaleDateString(undefined, { weekday: "narrow" })}</span>`;
     li.title = phaseName(moonAge(d));
     week.append(li);
   }
