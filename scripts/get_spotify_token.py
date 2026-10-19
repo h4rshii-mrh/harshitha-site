@@ -11,7 +11,9 @@ One-time helper to get your Spotify refresh token.
 import base64
 import http.server
 import json
+import os
 import secrets
+import ssl
 import urllib.parse
 import urllib.request
 import webbrowser
@@ -22,6 +24,13 @@ SCOPES = "user-read-currently-playing user-read-recently-played user-top-read"
 client_id = input("Spotify Client ID: ").strip()
 client_secret = input("Spotify Client Secret: ").strip()
 state = secrets.token_urlsafe(16)
+done = False
+
+# python.org builds of Python on macOS ship without trusted certificates,
+# so fall back to the system bundle that every Mac has.
+ssl_context = ssl.create_default_context(
+    cafile="/etc/ssl/cert.pem" if os.path.exists("/etc/ssl/cert.pem") else None
+)
 
 auth_url = "https://accounts.spotify.com/authorize?" + urllib.parse.urlencode({
     "client_id": client_id,
@@ -34,11 +43,18 @@ auth_url = "https://accounts.spotify.com/authorize?" + urllib.parse.urlencode({
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
+        global done
         query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+        # ignore stray browser requests (favicon etc.)
+        if not self.path.startswith("/callback"):
+            self.send_response(404)
+            self.end_headers()
+            return
         if query.get("state", [""])[0] != state or "code" not in query:
             self.send_response(400)
             self.end_headers()
             self.wfile.write(b"Something went wrong. Check the terminal.")
+            print("Spotify did not send a valid code:", query.get("error", ["unknown"])[0])
             return
 
         basic = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
@@ -52,14 +68,24 @@ class Handler(http.server.BaseHTTPRequestHandler):
             headers={"Authorization": f"Basic {basic}",
                      "Content-Type": "application/x-www-form-urlencoded"},
         )
-        with urllib.request.urlopen(req) as resp:
-            token = json.load(resp)["refresh_token"]
+        try:
+            with urllib.request.urlopen(req, context=ssl_context) as resp:
+                token = json.load(resp)["refresh_token"]
+        except Exception as err:
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(b"Could not finish. Check the terminal.")
+            print("\nCould not get the token from Spotify:", err)
+            print("Run the script again to retry.")
+            done = True
+            return
 
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"Done! Go back to your terminal. xoxo")
         print("\nYour SPOTIFY_REFRESH_TOKEN is:\n\n" + token + "\n")
         print("Add it to Vercel along with your Client ID and Secret. Keep it private.")
+        done = True
 
     def log_message(self, *args):
         pass
@@ -67,4 +93,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 print("\nOpening Spotify in your browser. If it doesn't open, visit:\n" + auth_url + "\n")
 webbrowser.open(auth_url)
-http.server.HTTPServer(("127.0.0.1", 8888), Handler).handle_request()
+server = http.server.HTTPServer(("127.0.0.1", 8888), Handler)
+print("Waiting for Spotify… (leave this window open)")
+while not done:
+    server.handle_request()
