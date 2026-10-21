@@ -136,8 +136,7 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
 }
 .spiral path { fill: none; stroke: var(--bone); stroke-width: .7; stroke-dasharray: 3000; stroke-dashoffset: 3000; animation: draw 5s ease forwards .3s; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
-.kicker { font-family: var(--serif); font-style: italic; color: var(--dusk); font-size: 20px; letter-spacing: .02em; }
-.hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(50px, 8vw, 96px); line-height: .98; letter-spacing: -.01em; margin: 14px 0 26px; }
+.hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(50px, 8vw, 96px); line-height: .98; letter-spacing: -.01em; margin: 0 0 26px; }
 .hero h1 em { display: block; color: var(--bone-soft); }
 .hero-sub { max-width: 500px; color: var(--bone-soft); }
 .hero-sub strong { color: var(--bone); }
