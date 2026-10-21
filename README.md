@@ -36,7 +36,3 @@ scripts/get_spotify_token.py   one-time helper to get a Spotify refresh token
 5. Go to **Deployments**, open the **⋯** menu on the latest one, and click **Redeploy**.
 
 The card shows your current song with a spinning record. When nothing is playing, it shows the last song you played.
-Below that, "On repeat this month" lists your top 5 songs from about the last 4 weeks. Spotify updates this list about once a day.
-
-**Already made a token before?** Run the script again. The top-songs list needs an extra permission (`user-top-read`).
-Replace `SPOTIFY_REFRESH_TOKEN` in Vercel with the new token, then redeploy.

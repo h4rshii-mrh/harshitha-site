@@ -206,42 +206,4 @@ async function loadSpotify() {
 loadSpotify();
 setInterval(() => document.visibilityState === "visible" && loadSpotify(), 30000);
 
-// ---------- Spotify: top tracks this month ----------
-async function loadTopTracks() {
-  try {
-    const res = await fetch("/api/top-tracks");
-    if (!res.ok) return;
-    const { tracks } = await res.json();
-    if (!tracks?.length) return;
-    const list = document.getElementById("top-list");
-    tracks.forEach((t) => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = t.songUrl || "https://open.spotify.com";
-      a.target = "_blank";
-      a.rel = "noopener";
-      if (t.albumImageUrl) {
-        const img = document.createElement("img");
-        img.src = t.albumImageUrl;
-        img.alt = "";
-        a.append(img);
-      }
-      const text = document.createElement("span");
-      text.className = "tt-text";
-      const title = document.createElement("span");
-      title.className = "tt-title";
-      title.textContent = t.title;
-      const artist = document.createElement("span");
-      artist.className = "tt-artist";
-      artist.textContent = ` · ${t.artist}`;
-      text.append(title, artist);
-      a.append(text);
-      li.append(a);
-      list.append(li);
-    });
-    document.getElementById("top-tracks").hidden = false;
-  } catch {}
-}
-loadTopTracks();
-
 document.getElementById("year").textContent = new Date().getFullYear();
