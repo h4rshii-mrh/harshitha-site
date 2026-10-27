@@ -48,10 +48,11 @@ const countObserver = new IntersectionObserver(
       const el = e.target;
       const target = +el.dataset.count;
       const suffix = el.dataset.suffix || "";
+      const prefix = el.dataset.prefix || "";
       const start = performance.now();
       const step = (now) => {
         const p = Math.min((now - start) / 1400, 1);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
+        el.textContent = prefix + Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
         if (p < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);

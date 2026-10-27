@@ -225,6 +225,12 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
 .job h3, .edu h3 { font-family: var(--serif); font-size: clamp(22px, 2.5vw, 27px); line-height: 1.2; font-weight: 400; }
 .org { font-family: var(--type); color: var(--dusk); font-size: 14px; letter-spacing: .04em; margin-top: 4px; }
 .date { flex: none; font-family: var(--type); font-size: 13px; color: var(--brass); white-space: nowrap; padding-top: 4px; }
+.org span { color: var(--bone-soft); }
+.when { flex: none; display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.place { font-family: var(--type); font-size: 12px; color: var(--bone-soft); }
+.jobs > .mini { margin: 18px 0 -8px; }
+.jobs > .mini:first-child { margin-top: 0; }
+.meta { font-family: var(--type); font-size: 12px; color: var(--brass); margin-left: 6px; }
 .job ul, .projects { list-style: none; }
 .job li, .projects li { position: relative; padding-left: 22px; margin-bottom: 9px; color: var(--bone-soft); }
 .job li::before, .projects li::before { content: "✕"; position: absolute; left: 0; top: 2px; font-size: 11px; color: var(--wine); }
@@ -293,6 +299,8 @@ mark { background: none; color: var(--bone); font-weight: 600; border-bottom: 1p
 @media (max-width: 560px) {
   body { font-size: 17px; }
   .job-top, .edu { flex-direction: column; align-items: flex-start; }
+  .when { align-items: baseline; text-align: left; flex-direction: row; gap: 10px; flex-wrap: wrap; }
+  .date { padding-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
